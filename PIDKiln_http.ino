@@ -51,7 +51,7 @@ String Preferences_parser(const String& var){
  else if(var=="Initial_Date") return String(Prefs[PRF_INIT_DATE].value.str);
  else if(var=="Initial_Time") return String(Prefs[PRF_INIT_TIME].value.str);
  
- else if(var=="MIN_Temperature") return String(Prefs[PRF_MIN_TEMP].value.uint8);
+ else if(var=="MIN_Temperature") return String(Prefs[PRF_MIN_TEMP].value.int16);
  else if(var=="MAX_Temperature") return String(Prefs[PRF_MAX_TEMP].value.uint16);
  else if(var=="MAX_Housing_Temperature") return String(Prefs[PRF_MAX_HOUSING_TEMP].value.uint16);
  else if(var=="Alarm_Timeout") return String(Prefs[PRF_ALARM_TIMEOUT].value.uint16);
@@ -105,7 +105,7 @@ String Debug_ESP32(const String& var){
  else if (var=="CHIP_REV") return String(ESP.getChipRevision());
  else if (var=="CHIP_MODEL") return String(ESP.getChipModel());
  else if (var=="CHIP_CORES") return String(ESP.getChipCores());
- else if (var=="CHIP_REVF") return String(REG_READ(EFUSE_BLK0_RDATA3_REG) >> 15, BIN);
+ else if (var=="CHIP_REVF") return String(ESP.getChipRevision());//String(REG_READ(EFUSE_BLK0_RDATA3_REG) >> 15, BIN);
  else if (var=="MAC_ADDRESS") return String(WiFi.macAddress());
  // SPI Flash RAM parameters
  //

@@ -118,16 +118,17 @@ File prg;
     DBG dbgLog(LOG_DEBUG,"[PRG] Found description: %s\n",Program_desc.c_str());
     if(!Program_desc.length()) Program_desc="No description";   // if after reading file program still has no description - add it
     
-    return 0;
-  }return Cleanup_program(1);
+    return 0; 
+  }
+  return Cleanup_program(1);
 }
 
 
 // Load programs directory into memory - to sort it etc for easier processing
 //
 uint8_t Load_programs_dir(){
-uint16_t count=0;
-File dir,file;
+  uint16_t count=0;
+  File dir,file;
 
   dir = SPIFFS.open(PRG_Directory);
   if(!dir) return 1;  // directory open failed
@@ -234,7 +235,7 @@ void Load_program_to_run(){
   Program_run_name=(char *)MALLOC((Program_name.length()+1)*sizeof(char));
   strcpy(Program_run_name,Program_name.c_str());
   Program_run_size=Program_size;
-  Program_run_state=PR_READY;
+  Program_run_state=PR_READY;  
 }
 
 
@@ -472,8 +473,8 @@ void START_Program(){
 // Check all possible safety measures - if something is wrong - abort
 //
 void SAFETY_Check(){
-  if(kiln_temp<Prefs[PRF_MIN_TEMP].value.uint8){
-    DBG dbgLog(LOG_ERR,"[PRG] Safety check failed - MIN temperature < %d\n",Prefs[PRF_MIN_TEMP].value.uint8);
+  if(kiln_temp<Prefs[PRF_MIN_TEMP].value.int16){
+    DBG dbgLog(LOG_ERR,"[PRG] Safety check failed - MIN temperature < %d\n",Prefs[PRF_MIN_TEMP].value.int16);
     ABORT_Program(PR_ERR_TOO_COLD);
   }else if(kiln_temp>Prefs[PRF_MAX_TEMP].value.uint16){
     DBG dbgLog(LOG_ERR,"[PRG] Safety check failed - MAX temperature > %d\n",Prefs[PRF_MAX_TEMP].value.uint16);
@@ -489,15 +490,15 @@ void SAFETY_Check(){
 // Function that create task to handle program running
 //
 void Program_Loop(void * parameter){
-static uint16_t cnt1=0;
-uint32_t now;
-
- for(;;){
-
+  static uint16_t cnt1=0;
+  uint32_t now;
+ 
+  for(;;){
+    //DBG dbgLog(LOG_DEBUG,"[Dmitry] Program loop!\n");
     now = millis();
  
     // Interrupts triggered ones per second
-    // 
+    //     
     if (xSemaphoreTake(timerSemaphore, 0) == pdTRUE){
 
       // Update temperature readout
@@ -541,13 +542,17 @@ uint32_t now;
     }
 
     // Do the PID stuff
+    //DBG dbgLog(LOG_INFO,"[Dmitry] PID stuff!\n");
     if(Program_run_state==PR_RUNNING || Program_run_state==PR_PAUSED || Program_run_state==PR_THRESHOLD){
       KilnPID.Compute();
 
       if (now - windowStartTime > Prefs[PRF_PID_WINDOW].value.uint16){ //time to shift the Relay Window
         windowStartTime += Prefs[PRF_PID_WINDOW].value.uint16;
       }
-      if (pid_out*PID_WINDOW_DIVIDER > now - windowStartTime) Enable_SSR();
+      if (pid_out*PID_WINDOW_DIVIDER > now - windowStartTime) {
+        Enable_SSR();
+        //DBG dbgLog(LOG_INFO,"[Dmitry] Enable_SSR!\n");
+      }
       else Disable_SSR();
     }
     //yield();
@@ -577,8 +582,8 @@ void Program_Setup(){
 
 
 // For testing!!!
-//  Load_program("test_up_down.txt");
-//  Load_program_to_run();
+ //Load_program("/programs/test_up_down.txt");
+ //Load_program_to_run();
 
   xTaskCreatePinnedToCore(
 //  xTaskCreate(

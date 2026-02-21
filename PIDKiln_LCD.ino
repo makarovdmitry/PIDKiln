@@ -20,14 +20,14 @@
 
 // Other variables
 //
-#define LCD_RESET 4   // RST on LCD
-#define LCD_CS 5      // RS on LCD
-#define LCD_CLOCK 18  // E on LCD
-#define LCD_DATA 23   // R/W on LCD
+#define LCD_RESET 42   // RST on LCD
+#define LCD_CS 39      // RS on LCD
+#define LCD_CLOCK 40  // E on LCD
+#define LCD_DATA 41   // R/W on LCD
 
 // You can switch hardware or software SPI interface to LCD. HW can be up to x10 faster - but requires special pins (and has some errors for me on 5V).
-//U8G2_ST7920_128X64_F_SW_SPI u8g2(U8G2_R2, /* clock=*/ LCD_CLOCK, /* data=*/ LCD_DATA, /* CS=*/ LCD_CS, /* reset=*/ LCD_RESET);
-U8G2_ST7920_128X64_F_HW_SPI u8g2(U8G2_R2, /* CS=*/ LCD_CS, /* reset=*/ LCD_RESET);
+U8G2_ST7920_128X64_F_SW_SPI u8g2(U8G2_R2, /* clock=*/ LCD_CLOCK, /* data=*/ LCD_DATA, /* CS=*/ LCD_CS, /* reset=*/ LCD_RESET);
+//U8G2_ST7920_128X64_F_HW_SPI u8g2(U8G2_R2, /* CS=*/ LCD_CS, /* reset=*/ LCD_RESET);
 
 
 /*
@@ -45,17 +45,17 @@ uint16_t chh,lnw;
 char out[MAX_CHARS_PL]; 
 
   chh=u8g2.getMaxCharHeight();
-  //DBG Serial.printf("[LCD] Line cut: Got:%s\n",msg);
+  DBG Serial.printf("[LCD] Line cut: Got:%s\n",msg);
   lnw=floor((SCREEN_W+mod)/u8g2.getMaxCharWidth())-1; // max chars in line
   if(strlen(msg)<=lnw){
     rest[0]='\0';
-    //DBG Serial.printf("[LCD] Line cut: line shorter then %d - skipping\n",lnw);
+    DBG Serial.printf("[LCD] Line cut: line shorter then %d - skipping\n",lnw);
     return false;
   }
   strncpy(rest,msg+lnw+1,strlen(msg)-lnw);
   rest[strlen(msg)-lnw]='\0';
   msg[lnw+1]='\0';
-  //DBG Serial.printf("[LCD] Line cut. Returning msg:'%s' and rest:'%s'\n",msg,rest);
+  DBG Serial.printf("[LCD] Line cut. Returning msg:'%s' and rest:'%s'\n",msg,rest);
   return true;
 }
 
@@ -75,7 +75,7 @@ void load_msg(char msg[MAX_CHARS_PL]){
 //
 void DrawVline(uint16_t x,uint16_t y,uint16_t h){
 
-  //DBG Serial.printf("[LCD] -> Draw V dots: x:%d\t y:%d\t h:%d\n",x,y,h);
+  DBG Serial.printf("[LCD] -> Draw V dots: x:%d\t y:%d\t h:%d\n",x,y,h);
   h+=y;
   for(uint16_t yy=y;yy<h;yy+=3) u8g2.drawPixel(x,yy);
 }

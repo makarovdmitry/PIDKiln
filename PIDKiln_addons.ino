@@ -5,8 +5,10 @@
 #include <MAX31855.h>
 
 // Initialize SPI and MAX31855
-SPIClass *ESP32_SPI = new SPIClass(HSPI);
-MAX31855 ThermocoupleA(MAXCS1);
+ 
+//SPIClass *ESP32_SPI = new SPIClass(HSPI);
+//MAX31855_soft ThermocoupleA(MAXCS1, 12, 13);//
+MAX31855 ThermocoupleA(MAXCS1);//, 12, 13
 
 // If we have defines power meter pins
 #ifdef ENERGY_MON_PIN
@@ -63,15 +65,16 @@ void print_bits(uint32_t raw){
         Serial.print(b);
     }
 
-Serial.println();
+  Serial.println();
 }
 
 
 // ThermocoupleA temperature readout
 //
 void Update_TemperatureA(){
-uint32_t raw;
-double kiln_tmp1;
+  uint32_t raw;
+  double kiln_tmp1;
+  ThermocoupleA.begin();
 
   raw = ThermocoupleA.readRawData();
 //Serial.print("A");
@@ -116,8 +119,8 @@ double kiln_tmp1;
   kiln_tmp1 = ThermocoupleA.getTemperature(raw);
   kiln_temp=(kiln_temp*0.9+kiln_tmp1*0.1);    // We try to make bigger hysteresis
 
-  if(TempA_errors>0) TempA_errors--;  // Lower errors count after proper readout
-  
+  //if(TempA_errors>0) TempA_errors--;  // Lower errors count after proper readout
+  if(TempA_errors>0) TempA_errors=0; //Обнулять ошибки
   DBG dbgLog(LOG_DEBUG, "[ADDONS] Temperature sensor A readout: Internal temp = %.1f \t Last temp = %.1f \t Average kiln temp = %.1f\n", int_temp, kiln_tmp1, kiln_temp); 
 }
 
@@ -216,7 +219,7 @@ static uint32_t last=0;
 void Power_Loop(void * parameter){
   for(;;){
     Read_Energy_INPUT();  // current redout takes around 3-5ms - so we will do it 10 times a second.
-    vTaskDelay( 100 / portTICK_PERIOD_MS );
+    vTaskDelay( 100 / portTICK_PERIOD_MS );    
   }
 }
 
@@ -246,7 +249,8 @@ void Setup_Addons(){
   pinMode(ALARM_PIN, OUTPUT);
 
   SSR_On=false;
-  ThermocoupleA.begin(ESP32_SPI);
+  //ThermocoupleA.begin();//ThermocoupleA.begin(ESP32_SPI);
+  SPI.begin(MAX31855_SCK, MAX31855_MISO, -1, MAXCS1);
 #ifdef MAXCS2
   ThermocoupleB.begin(ESP32_SPI);
 #endif

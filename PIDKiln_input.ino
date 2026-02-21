@@ -2,7 +2,12 @@
 ** Pidkiln input (rotary encoder, buttons) subsystem
 **
 */
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "esp_log.h"
 
+#define configUSE_TRACE_FACILITY            1
+#define configUSE_STATS_FORMATTING_FUNCTIONS 1
 // Other variables
 //
 
@@ -122,6 +127,7 @@ void Rotate(){
 void Input_Loop(void * parameter) {
 
   for(;;){
+    //DBG dbgLog(LOG_DEBUG,"[Dmitry] Input_Loop!\n");
     if(encoderButton){
       vTaskDelay( ENCODER_BUTTON_DELAY / portTICK_PERIOD_MS );
       if(digitalRead(ENCODER0_BUTTON)!=LOW){ // Button is still pressed - skip, perhaps it's a long press
@@ -144,6 +150,27 @@ void Input_Loop(void * parameter) {
   }
 }
 
+#define configTASK_LIST_BUFFER_SIZE 1024 
+char cTaskListBuffer[configTASK_LIST_BUFFER_SIZE];
+void list_tasks_task(void *pvParameters) {
+    for (;;) {
+        // Wait for some time (e.g., 5 seconds) before generating the report
+        vTaskDelay(pdMS_TO_TICKS(5000));
+
+        // Clear the buffer
+        memset(cTaskListBuffer, 0, configTASK_LIST_BUFFER_SIZE);
+
+        // Generate the task list
+        // NOTE: This function temporarily disables interrupts/scheduler, so use for debugging only
+        vTaskList(cTaskListBuffer);
+
+        // Print the task list to the console/serial port
+        printf("**********************************\n");
+        printf("Task Name\tState\tPrio\tStack\tNum\n");
+        printf("%s\n", cTaskListBuffer);
+        printf("**********************************\n");
+    }
+}
 
 // Interrupt parser for rotary encoder and it's button
 //
@@ -168,7 +195,7 @@ void handleInterrupt() {
 // Setup all input pins and interrupts
 //
 void Setup_Input() {
-
+  //DBG dbgLog(LOG_DEBUG,"[Dmitry] Setup Input!\n");
   pinMode(ENCODER0_PINA, INPUT_PULLUP); 
   pinMode(ENCODER0_PINB, INPUT_PULLUP);
   pinMode(ENCODER0_BUTTON, INPUT_PULLUP);
@@ -176,17 +203,17 @@ void Setup_Input() {
   //digitalWrite(ENCODER0_PINA, HIGH); //turn pullup resistor on
   //digitalWrite(ENCODER0_PINB, HIGH); //turn pullup resistor on
   //digitalWrite(ENCODER0_BUTTON, HIGH); //turn pullup resistor on
-
+  
   attachInterrupt(ENCODER0_PINA, handleInterrupt, CHANGE);
   attachInterrupt(ENCODER0_PINB, handleInterrupt, CHANGE);
   attachInterrupt(ENCODER0_BUTTON, handleInterrupt, FALLING);
-
+  
   xTaskCreatePinnedToCore(
 //  xTaskCreate(
               Input_Loop,       /* Task function. */
               "Input_loop",     /* String with name of task. */
-              8192,             /* Stack size in bytes. */
+              8192,             /* Stack size in bytes. */  
               NULL,             /* Parameter passed as input of the task */
               1,                /* Priority of the task. */
-              NULL,0);            /* Task handle. */
+              NULL,0);            /* Task handle. */                                          
 }
