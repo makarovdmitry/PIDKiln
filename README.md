@@ -11,6 +11,7 @@ PIDKiln is PID temperature controller, for any task involving high temperatures 
 - Safety features build in (temperature run out protection, probe failure, SSR failure, kiln insulation failure)
 - Online PIDKiln firmware upgrade with web interface
 - Syslog type, over the network (UDP) logging to remote server
+- Mqtt broker, port 1883, broker ip=syslog ip server
 - ...simply cool and cheap (comparing to commercially available products) all in one solution
 
 ### Sample LCD screens
@@ -19,14 +20,14 @@ PIDKiln is PID temperature controller, for any task involving high temperatures 
 ![Web interface](https://github.com/Saur0o0n/PIDKiln/blob/master/Documentation/images/PIDKiln-web-chart.jpg)
 
 ## Required components:
-- ESP32-Wrover board (I've used TTGO with MicroSD)
+- ESP32S3 (I use N8R2 and N16R8 version)
 - MAX31855 breakout board
 - K-type thermocouple
 - DC->AC solid state relay
 
 Kind of optional, but recommended:
-- 128x65 dot matrix LCD 12864B v2
-- Rotary encoder with button
+- 128x65 dot matrix LCD 12864B v2 (I don't use)
+- Rotary encoder with button (I don't use)
 
 Optional:
 - DC/AC secondary relay - like SLA-05VDC-SL-C (240V/30A) mechanical relay
@@ -37,7 +38,7 @@ Optional:
 ## BOM and expenses
 
 Total expenses for this set should be around 30-40$
-- ESP32-Wrover board: 11-14$ if exactly like mine, but other ESP32-Wrover you can bought for 6$+
+- ESP32S3-var
 - MAX31855 board: ~2$
 - K-type thermocouple: 1$-10$ - depending on max temperature it can withstand
 - LCD 12864B: ~5$
@@ -187,8 +188,8 @@ This is short version - for detailed one, please see [Wiki documentation](https:
 Almost all, what I had in mind is done.. so not much to write here :)
 Perhaps...
 - RTC clock for better timing and no Internet installations
-- MQTT reporting
-- HomeAssistant integration
+- MQTT reporting (added)
+- HomeAssistant integration (may be manual added as sensor)
 
 
 
