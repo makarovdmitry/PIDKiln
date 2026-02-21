@@ -4,9 +4,9 @@
 /* 
 ** Some definitions - usually you should not edit this, but you may want to
 */
-#define ENCODER0_PINA    34
-#define ENCODER0_PINB    35
-#define ENCODER0_BUTTON  32
+#define ENCODER0_PINA    4//1//34
+#define ENCODER0_PINB    5//2//35
+#define ENCODER0_BUTTON  6//3//32
 #define ENCODER_BUTTON_DELAY 150  // 150ms between button press readout
 #define ENCODER_ROTATE_DELAY 120  // 120ms between rotate readout
 const uint16_t Long_Press=400; // long press button takes about 0,9 second
@@ -18,18 +18,21 @@ const int MAX_Prog_File_Size=10240;  // maximum file size (bytes) that can be up
 **
 */
 
-#define EMR_RELAY_PIN 21
-#define SSR1_RELAY_PIN 19
+#define EMR_RELAY_PIN 9//21
+#define SSR1_RELAY_PIN 15//47//19
 //#define SSR2_RELAY_PIN 22   // if you want to use additional SSR for second heater, uncoment this
 
 // MAX31855 variables/defs
-#define MAXCS1  27    // for hardware SPI - HSPI (MOSI-13, MISO-12, CLK-14) - 1st device CS-27
-#define MAXCS2  15    // same SPI - 2nd device CS-15 (comment out if no second thermocouple)
+//#define MAX31855_CS   3
+#define MAX31855_MISO 12
+#define MAX31855_SCK  13
+#define MAXCS1  17//38//27    // for hardware SPI - HSPI (MOSI-13, MISO-12, CLK-14) - 1st device CS-27
+//#define MAXCS2  7//15    // same SPI - 2nd device CS-15 (comment out if no second thermocouple)
 
 // If you have power meter - uncoment this
 //#define ENERGY_MON_PIN 33       // if you don't use - comment out
 
-#define ALARM_PIN 26        // Pin goes high on abort
+#define ALARM_PIN 18//40//26        // Pin goes high on abort
 uint16_t ALARM_countdown=0; // countdown in seconds to stop alarm
 
 /*
