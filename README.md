@@ -102,15 +102,15 @@ EPS32	| MAX31855 A
 +3.3V	| VCC
 GND	| GND
 12	| SO/DO (slave output/data output)
-14	| SCK (clock)
-27	| CS (chip select)
+13	| SCK (clock)
+17	| CS (chip select)
 
 EPS32	| MAX31855 B
 --------|---------
 +3.3V	| VCC
 GND	| GND
 12	| SO/DO (slave output/data output)
-14	| SCK (clock)
+13	| SCK (clock)
 15	| CS (chip select)
 
 **Relays**
